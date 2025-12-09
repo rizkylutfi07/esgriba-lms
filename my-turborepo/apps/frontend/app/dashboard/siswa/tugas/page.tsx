@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
+
 
 export default function TugasSiswaPage() {
   const [selectedTugas, setSelectedTugas] = useState<any>(null);
@@ -54,7 +54,7 @@ export default function TugasSiswaPage() {
     if (!siswaData?.id) return;
 
     const isLate = new Date() > new Date(selectedTugas.dueDate);
-    
+
     submitMutation.mutate({
       tugasId: selectedTugas.id,
       siswaId: siswaData.id,
@@ -68,7 +68,7 @@ export default function TugasSiswaPage() {
   };
 
   return (
-    <DashboardLayout>
+
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">Tugas</h1>
 
@@ -96,60 +96,59 @@ export default function TugasSiswaPage() {
 
       {tugasList?.filter((t: any) => t.status === 'PUBLISHED').length > 0 ? (
         <div className="grid gap-4">{tugasList
-            .filter((t: any) => t.status === 'PUBLISHED')
-            .map((tugas: any) => {
-              const submission = getSubmissionForTugas(tugas.id);
-              const isOverdue = new Date() > new Date(tugas.dueDate);
+          .filter((t: any) => t.status === 'PUBLISHED')
+          .map((tugas: any) => {
+            const submission = getSubmissionForTugas(tugas.id);
+            const isOverdue = new Date() > new Date(tugas.dueDate);
 
-              return (
-                <Card key={tugas.id}>
-                  <CardContent className="pt-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-2">{tugas.title}</h3>
-                        <p className="text-gray-600 mb-2">{tugas.description}</p>
-                        <div className="text-sm text-gray-500 space-y-1">
-                          <div>Mata Pelajaran: {tugas.subject?.name}</div>
-                          <div>Batas Waktu: {new Date(tugas.dueDate).toLocaleString('id-ID')}</div>
-                          <div>Nilai Maksimal: {tugas.maxScore}</div>
-                          {isOverdue && !submission && (
-                            <div className="text-red-600 font-semibold">⚠️ Terlambat</div>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        {submission ? (
-                          <div className="text-right">
-                            <span className={`px-3 py-1 text-sm rounded ${
-                              submission.status === 'GRADED'
-                                ? 'bg-green-100 text-green-800'
-                                : submission.status === 'LATE'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-blue-100 text-blue-800'
-                            }`}>
-                              {submission.status === 'GRADED'
-                                ? `Dinilai: ${submission.score}/${tugas.maxScore}`
-                                : submission.status === 'LATE'
-                                ? 'Terlambat'
-                                : 'Sudah Dikumpulkan'}
-                            </span>
-                            {submission.feedback && (
-                              <p className="text-sm text-gray-600 mt-2">
-                                Catatan: {submission.feedback}
-                              </p>
-                            )}
-                          </div>
-                        ) : (
-                          <Button onClick={() => setSelectedTugas(tugas)}>
-                            Kumpulkan
-                          </Button>
+            return (
+              <Card key={tugas.id}>
+                <CardContent className="pt-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold mb-2">{tugas.title}</h3>
+                      <p className="text-gray-600 mb-2">{tugas.description}</p>
+                      <div className="text-sm text-gray-500 space-y-1">
+                        <div>Mata Pelajaran: {tugas.subject?.name}</div>
+                        <div>Batas Waktu: {new Date(tugas.dueDate).toLocaleString('id-ID')}</div>
+                        <div>Nilai Maksimal: {tugas.maxScore}</div>
+                        {isOverdue && !submission && (
+                          <div className="text-red-600 font-semibold">⚠️ Terlambat</div>
                         )}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                    <div>
+                      {submission ? (
+                        <div className="text-right">
+                          <span className={`px-3 py-1 text-sm rounded ${submission.status === 'GRADED'
+                            ? 'bg-green-100 text-green-800'
+                            : submission.status === 'LATE'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-blue-100 text-blue-800'
+                            }`}>
+                            {submission.status === 'GRADED'
+                              ? `Dinilai: ${submission.score}/${tugas.maxScore}`
+                              : submission.status === 'LATE'
+                                ? 'Terlambat'
+                                : 'Sudah Dikumpulkan'}
+                          </span>
+                          {submission.feedback && (
+                            <p className="text-sm text-gray-600 mt-2">
+                              Catatan: {submission.feedback}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <Button onClick={() => setSelectedTugas(tugas)}>
+                          Kumpulkan
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       ) : (
         <Card>
@@ -217,6 +216,5 @@ export default function TugasSiswaPage() {
         </div>
       )}
     </div>
-    </DashboardLayout>
   );
 }

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
+
 
 export default function TugasGuruPage() {
   const [showForm, setShowForm] = useState(false);
@@ -127,7 +127,7 @@ export default function TugasGuruPage() {
   };
 
   return (
-    <DashboardLayout>
+
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Tugas</h1>
@@ -236,9 +236,8 @@ export default function TugasGuruPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-xl font-semibold">{tugas.title}</h3>
-                    <span className={`px-2 py-1 text-xs rounded ${
-                      tugas.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span className={`px-2 py-1 text-xs rounded ${tugas.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
                       {tugas.status}
                     </span>
                   </div>
@@ -294,11 +293,10 @@ export default function TugasGuruPage() {
                             {new Date(p.submittedAt).toLocaleString('id-ID')}
                           </p>
                         </div>
-                        <span className={`px-2 py-1 text-xs rounded ${
-                          p.status === 'GRADED' ? 'bg-green-100 text-green-800' :
+                        <span className={`px-2 py-1 text-xs rounded ${p.status === 'GRADED' ? 'bg-green-100 text-green-800' :
                           p.status === 'LATE' ? 'bg-red-100 text-red-800' :
-                          'bg-blue-100 text-blue-800'
-                        }`}>
+                            'bg-blue-100 text-blue-800'
+                          }`}>
                           {p.status}
                         </span>
                       </div>
@@ -322,6 +320,5 @@ export default function TugasGuruPage() {
         </div>
       )}
     </div>
-    </DashboardLayout>
   );
 }

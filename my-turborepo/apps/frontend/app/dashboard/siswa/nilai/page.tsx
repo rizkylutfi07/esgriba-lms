@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/lib/api';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
+
 
 export default function NilaiSiswaPage() {
   const { data: siswaData } = useQuery({
@@ -20,10 +20,10 @@ export default function NilaiSiswaPage() {
     enabled: !!siswaData?.id,
   });
 
-  if (isLoading) return <DashboardLayout><div className="flex items-center justify-center h-64">Loading...</div></DashboardLayout>;
+  if (isLoading) return <div className="flex items-center justify-center h-64">Loading...</div>;
 
   return (
-    <DashboardLayout>
+
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">Nilai Saya</h1>
 
@@ -82,6 +82,5 @@ export default function NilaiSiswaPage() {
         </Card>
       )}
     </div>
-    </DashboardLayout>
   );
 }

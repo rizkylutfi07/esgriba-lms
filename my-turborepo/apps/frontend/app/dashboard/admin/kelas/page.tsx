@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -163,15 +163,15 @@ export default function KelasPage() {
 
       if (result.success > 0) {
         queryClient.invalidateQueries({ queryKey: ['kelas'] });
-        toast({ 
-          title: 'Import berhasil', 
-          description: `${result.success} kelas berhasil diimport, ${result.failed} gagal` 
+        toast({
+          title: 'Import berhasil',
+          description: `${result.success} kelas berhasil diimport, ${result.failed} gagal`
         });
       } else {
-        toast({ 
-          variant: 'destructive', 
-          title: 'Import gagal', 
-          description: result.errors?.join(', ') || 'Semua data gagal diimport' 
+        toast({
+          variant: 'destructive',
+          title: 'Import gagal',
+          description: result.errors?.join(', ') || 'Semua data gagal diimport'
         });
       }
     } catch (error) {
@@ -183,112 +183,112 @@ export default function KelasPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Manajemen Kelas</h1>
-            <p className="text-gray-500 mt-1 text-sm md:text-base">Kelola data kelas</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={handleDownloadTemplate} size="sm" className="flex-1 md:flex-none">
-              <FileDown className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">Download Template</span>
-            </Button>
-            <Button variant="outline" onClick={handleExportExcel} size="sm" className="flex-1 md:flex-none">
-              <Download className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">Export Excel</span>
-            </Button>
-            <Button variant="outline" disabled={isImporting} className="relative flex-1 md:flex-none" size="sm">
-              <Upload className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">{isImporting ? 'Mengimport...' : 'Import Excel'}</span>
-              <input
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={handleImportExcel}
-                disabled={isImporting}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-            </Button>
-            <Button onClick={() => { setEditingKelas(null); setIsFormOpen(!isFormOpen); }} size="sm" className="flex-1 md:flex-none">
-              <Plus className="w-4 h-4 md:mr-2" />
-              <span className="md:inline">Tambah</span>
-            </Button>
-          </div>
+
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">Manajemen Kelas</h1>
+          <p className="text-gray-500 mt-1 text-sm md:text-base">Kelola data kelas</p>
         </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={handleDownloadTemplate} size="sm" className="flex-1 md:flex-none">
+            <FileDown className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">Download Template</span>
+          </Button>
+          <Button variant="outline" onClick={handleExportExcel} size="sm" className="flex-1 md:flex-none">
+            <Download className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">Export Excel</span>
+          </Button>
+          <Button variant="outline" disabled={isImporting} className="relative flex-1 md:flex-none" size="sm">
+            <Upload className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">{isImporting ? 'Mengimport...' : 'Import Excel'}</span>
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleImportExcel}
+              disabled={isImporting}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+            />
+          </Button>
+          <Button onClick={() => { setEditingKelas(null); setIsFormOpen(!isFormOpen); }} size="sm" className="flex-1 md:flex-none">
+            <Plus className="w-4 h-4 md:mr-2" />
+            <span className="md:inline">Tambah</span>
+          </Button>
+        </div>
+      </div>
 
-        {isFormOpen && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{editingKelas ? 'Edit Kelas' : 'Tambah Kelas Baru'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nama Kelas</Label>
-                    <Input id="name" name="name" defaultValue={editingKelas?.name} required placeholder="Contoh: X-1" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="level">Tingkat</Label>
-                    <select 
-                      id="level" 
-                      name="level" 
-                      defaultValue={editingKelas?.level || 'X'}
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-                      required
-                    >
-                      <option value="X">X</option>
-                      <option value="XI">XI</option>
-                      <option value="XII">XII</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="majorId">Jurusan</Label>
-                    <select 
-                      id="majorId" 
-                      name="majorId" 
-                      defaultValue={editingKelas?.majorId || ''}
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-                    >
-                      <option value="">Pilih Jurusan</option>
-                      {jurusanList?.map((jurusan: any) => (
-                        <option key={jurusan.id} value={jurusan.id}>{jurusan.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="homeroomTeacherId">Wali Kelas</Label>
-                    <select 
-                      id="homeroomTeacherId" 
-                      name="homeroomTeacherId" 
-                      defaultValue={editingKelas?.homeroomTeacherId || ''}
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-                    >
-                      <option value="">Pilih Wali Kelas</option>
-                      {guruList?.map((guru: any) => (
-                        <option key={guru.id} value={guru.id}>{guru.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit">{editingKelas ? 'Update' : 'Simpan'}</Button>
-                  <Button type="button" variant="outline" onClick={() => { setIsFormOpen(false); setEditingKelas(null); }}>
-                    Batal
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        )}
-
+      {isFormOpen && (
         <Card>
-          <CardContent className="pt-6">
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <div className="overflow-x-auto">
+          <CardHeader>
+            <CardTitle>{editingKelas ? 'Edit Kelas' : 'Tambah Kelas Baru'}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nama Kelas</Label>
+                  <Input id="name" name="name" defaultValue={editingKelas?.name} required placeholder="Contoh: X-1" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="level">Tingkat</Label>
+                  <select
+                    id="level"
+                    name="level"
+                    defaultValue={editingKelas?.level || 'X'}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                    required
+                  >
+                    <option value="X">X</option>
+                    <option value="XI">XI</option>
+                    <option value="XII">XII</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="majorId">Jurusan</Label>
+                  <select
+                    id="majorId"
+                    name="majorId"
+                    defaultValue={editingKelas?.majorId || ''}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                  >
+                    <option value="">Pilih Jurusan</option>
+                    {jurusanList?.map((jurusan: any) => (
+                      <option key={jurusan.id} value={jurusan.id}>{jurusan.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="homeroomTeacherId">Wali Kelas</Label>
+                  <select
+                    id="homeroomTeacherId"
+                    name="homeroomTeacherId"
+                    defaultValue={editingKelas?.homeroomTeacherId || ''}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                  >
+                    <option value="">Pilih Wali Kelas</option>
+                    {guruList?.map((guru: any) => (
+                      <option key={guru.id} value={guru.id}>{guru.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">{editingKelas ? 'Update' : 'Simpan'}</Button>
+                <Button type="button" variant="outline" onClick={() => { setIsFormOpen(false); setEditingKelas(null); }}>
+                  Batal
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="pt-6">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -322,11 +322,10 @@ export default function KelasPage() {
                   ))}
                 </TableBody>
               </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </DashboardLayout>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

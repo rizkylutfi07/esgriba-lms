@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -161,15 +161,15 @@ export default function SiswaPage() {
 
       if (result.success > 0) {
         queryClient.invalidateQueries({ queryKey: ['siswa'] });
-        toast({ 
-          title: 'Import berhasil', 
-          description: `${result.success} siswa berhasil diimport, ${result.failed} gagal` 
+        toast({
+          title: 'Import berhasil',
+          description: `${result.success} siswa berhasil diimport, ${result.failed} gagal`
         });
       } else {
-        toast({ 
-          variant: 'destructive', 
-          title: 'Import gagal', 
-          description: result.errors?.join(', ') || 'Semua data gagal diimport' 
+        toast({
+          variant: 'destructive',
+          title: 'Import gagal',
+          description: result.errors?.join(', ') || 'Semua data gagal diimport'
         });
       }
     } catch (error) {
@@ -181,119 +181,119 @@ export default function SiswaPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Manajemen Siswa</h1>
-            <p className="text-gray-500 mt-1 text-sm md:text-base">Kelola data siswa</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={handleDownloadTemplate} size="sm" className="flex-1 md:flex-none">
-              <FileDown className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">Download Template</span>
-            </Button>
-            <Button variant="outline" onClick={handleExportExcel} size="sm" className="flex-1 md:flex-none">
-              <Download className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">Export Excel</span>
-            </Button>
-            <Button variant="outline" disabled={isImporting} className="relative flex-1 md:flex-none" size="sm">
-              <Upload className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">{isImporting ? 'Mengimport...' : 'Import Excel'}</span>
-              <input
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={handleImportExcel}
-                disabled={isImporting}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-            </Button>
-            <Button onClick={() => { setEditingSiswa(null); setIsFormOpen(!isFormOpen); }} size="sm" className="flex-1 md:flex-none">
-              <Plus className="w-4 h-4 md:mr-2" />
-              <span className="md:inline">Tambah</span>
-            </Button>
-          </div>
+
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">Manajemen Siswa</h1>
+          <p className="text-gray-500 mt-1 text-sm md:text-base">Kelola data siswa</p>
         </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={handleDownloadTemplate} size="sm" className="flex-1 md:flex-none">
+            <FileDown className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">Download Template</span>
+          </Button>
+          <Button variant="outline" onClick={handleExportExcel} size="sm" className="flex-1 md:flex-none">
+            <Download className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">Export Excel</span>
+          </Button>
+          <Button variant="outline" disabled={isImporting} className="relative flex-1 md:flex-none" size="sm">
+            <Upload className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">{isImporting ? 'Mengimport...' : 'Import Excel'}</span>
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleImportExcel}
+              disabled={isImporting}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+            />
+          </Button>
+          <Button onClick={() => { setEditingSiswa(null); setIsFormOpen(!isFormOpen); }} size="sm" className="flex-1 md:flex-none">
+            <Plus className="w-4 h-4 md:mr-2" />
+            <span className="md:inline">Tambah</span>
+          </Button>
+        </div>
+      </div>
 
-        {isFormOpen && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{editingSiswa ? 'Edit Siswa' : 'Tambah Siswa Baru'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="nis">NIS</Label>
-                    <Input id="nis" name="nis" defaultValue={editingSiswa?.nis} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="nisn">NISN</Label>
-                    <Input id="nisn" name="nisn" defaultValue={editingSiswa?.nisn} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nama Lengkap</Label>
-                    <Input id="name" name="name" defaultValue={editingSiswa?.name} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="gender">Jenis Kelamin</Label>
-                    <select 
-                      id="gender" 
-                      name="gender" 
-                      defaultValue={editingSiswa?.gender || 'LAKI_LAKI'}
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-                      required
-                    >
-                      <option value="LAKI_LAKI">Laki-laki</option>
-                      <option value="PEREMPUAN">Perempuan</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="birthDate">Tanggal Lahir</Label>
-                    <Input 
-                      id="birthDate" 
-                      name="birthDate" 
-                      type="date" 
-                      defaultValue={editingSiswa?.birthDate?.split('T')[0]} 
-                      required 
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="classId">Kelas</Label>
-                    <select 
-                      id="classId" 
-                      name="classId" 
-                      defaultValue={editingSiswa?.classId || ''}
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-                    >
-                      <option value="">Pilih Kelas</option>
-                      {kelasList?.map((kelas: any) => (
-                        <option key={kelas.id} value={kelas.id}>{kelas.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-2 col-span-2">
-                    <Label htmlFor="address">Alamat</Label>
-                    <Input id="address" name="address" defaultValue={editingSiswa?.address} />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit">{editingSiswa ? 'Update' : 'Simpan'}</Button>
-                  <Button type="button" variant="outline" onClick={() => { setIsFormOpen(false); setEditingSiswa(null); }}>
-                    Batal
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        )}
-
+      {isFormOpen && (
         <Card>
-          <CardContent className="pt-6">
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <div className="overflow-x-auto">
+          <CardHeader>
+            <CardTitle>{editingSiswa ? 'Edit Siswa' : 'Tambah Siswa Baru'}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="nis">NIS</Label>
+                  <Input id="nis" name="nis" defaultValue={editingSiswa?.nis} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nisn">NISN</Label>
+                  <Input id="nisn" name="nisn" defaultValue={editingSiswa?.nisn} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nama Lengkap</Label>
+                  <Input id="name" name="name" defaultValue={editingSiswa?.name} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Jenis Kelamin</Label>
+                  <select
+                    id="gender"
+                    name="gender"
+                    defaultValue={editingSiswa?.gender || 'LAKI_LAKI'}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                    required
+                  >
+                    <option value="LAKI_LAKI">Laki-laki</option>
+                    <option value="PEREMPUAN">Perempuan</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="birthDate">Tanggal Lahir</Label>
+                  <Input
+                    id="birthDate"
+                    name="birthDate"
+                    type="date"
+                    defaultValue={editingSiswa?.birthDate?.split('T')[0]}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="classId">Kelas</Label>
+                  <select
+                    id="classId"
+                    name="classId"
+                    defaultValue={editingSiswa?.classId || ''}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                  >
+                    <option value="">Pilih Kelas</option>
+                    {kelasList?.map((kelas: any) => (
+                      <option key={kelas.id} value={kelas.id}>{kelas.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="address">Alamat</Label>
+                  <Input id="address" name="address" defaultValue={editingSiswa?.address} />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">{editingSiswa ? 'Update' : 'Simpan'}</Button>
+                <Button type="button" variant="outline" onClick={() => { setIsFormOpen(false); setEditingSiswa(null); }}>
+                  Batal
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="pt-6">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -327,11 +327,10 @@ export default function SiswaPage() {
                   ))}
                 </TableBody>
               </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </DashboardLayout>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

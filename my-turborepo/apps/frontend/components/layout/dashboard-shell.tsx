@@ -1,11 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/login');
+        } else {
+            setIsLoading(false);
+        }
+    }, [router]);
+
+    if (isLoading) {
+        return null; // Or a loading spinner
+    }
 
     return (
         <div className="flex min-h-screen bg-muted/40 overflow-hidden">

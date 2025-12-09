@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
+
 
 export default function MateriGuruPage() {
   const [showForm, setShowForm] = useState(false);
@@ -125,10 +125,10 @@ export default function MateriGuruPage() {
     setShowForm(true);
   };
 
-  if (isLoading) return <DashboardLayout><div className="flex items-center justify-center h-64">Loading...</div></DashboardLayout>;
+  if (isLoading) return <div className="flex items-center justify-center h-64">Loading...</div>;
 
   return (
-    <DashboardLayout>
+
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Materi Pembelajaran</h1>
@@ -252,6 +252,5 @@ export default function MateriGuruPage() {
         ))}
       </div>
     </div>
-    </DashboardLayout>
   );
 }

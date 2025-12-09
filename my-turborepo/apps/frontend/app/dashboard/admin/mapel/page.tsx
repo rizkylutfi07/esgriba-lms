@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import DashboardLayout from '@/components/layouts/dashboard-layout';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,99 +72,98 @@ export default function MapelPage() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Manajemen Mata Pelajaran</h1>
-            <p className="text-gray-500 mt-1">Kelola data mata pelajaran</p>
-          </div>
-          <Button onClick={() => { setEditingMapel(null); setIsFormOpen(!isFormOpen); }}>
-            <Plus className="w-4 h-4 mr-2" />
-            Tambah Mapel
-          </Button>
+
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Manajemen Mata Pelajaran</h1>
+          <p className="text-gray-500 mt-1">Kelola data mata pelajaran</p>
         </div>
+        <Button onClick={() => { setEditingMapel(null); setIsFormOpen(!isFormOpen); }}>
+          <Plus className="w-4 h-4 mr-2" />
+          Tambah Mapel
+        </Button>
+      </div>
 
-        {isFormOpen && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{editingMapel ? 'Edit Mapel' : 'Tambah Mapel Baru'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nama Mata Pelajaran</Label>
-                    <Input id="name" name="name" placeholder="Matematika" defaultValue={editingMapel?.name} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="code">Kode</Label>
-                    <Input id="code" name="code" placeholder="MTK" defaultValue={editingMapel?.code} required />
-                  </div>
-                  <div className="space-y-2 col-span-2">
-                    <Label htmlFor="teacherId">Guru Pengampu</Label>
-                    <select 
-                      id="teacherId" 
-                      name="teacherId" 
-                      defaultValue={editingMapel?.teacherId || ''}
-                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-                    >
-                      <option value="">Pilih Guru</option>
-                      {guruList?.map((guru: any) => (
-                        <option key={guru.id} value={guru.id}>{guru.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit">{editingMapel ? 'Update' : 'Simpan'}</Button>
-                  <Button type="button" variant="outline" onClick={() => { setIsFormOpen(false); setEditingMapel(null); }}>
-                    Batal
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        )}
-
+      {isFormOpen && (
         <Card>
-          <CardContent className="pt-6">
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Kode</TableHead>
-                    <TableHead>Nama Mata Pelajaran</TableHead>
-                    <TableHead>Guru Pengampu</TableHead>
-                    <TableHead className="text-right">Aksi</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mapelList?.map((mapel: any) => (
-                    <TableRow key={mapel.id}>
-                      <TableCell className="font-medium">{mapel.code}</TableCell>
-                      <TableCell>{mapel.name}</TableCell>
-                      <TableCell>{mapel.teacher?.name || '-'}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={() => { setEditingMapel(mapel); setIsFormOpen(true); }}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => {
-                          if (confirm('Hapus mapel ini?')) deleteMutation.mutate(mapel.id);
-                        }}>
-                          <Trash2 className="w-4 h-4 text-red-600" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+          <CardHeader>
+            <CardTitle>{editingMapel ? 'Edit Mapel' : 'Tambah Mapel Baru'}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nama Mata Pelajaran</Label>
+                  <Input id="name" name="name" placeholder="Matematika" defaultValue={editingMapel?.name} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="code">Kode</Label>
+                  <Input id="code" name="code" placeholder="MTK" defaultValue={editingMapel?.code} required />
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="teacherId">Guru Pengampu</Label>
+                  <select
+                    id="teacherId"
+                    name="teacherId"
+                    defaultValue={editingMapel?.teacherId || ''}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                  >
+                    <option value="">Pilih Guru</option>
+                    {guruList?.map((guru: any) => (
+                      <option key={guru.id} value={guru.id}>{guru.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">{editingMapel ? 'Update' : 'Simpan'}</Button>
+                <Button type="button" variant="outline" onClick={() => { setIsFormOpen(false); setEditingMapel(null); }}>
+                  Batal
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
-      </div>
-    </DashboardLayout>
+      )}
+
+      <Card>
+        <CardContent className="pt-6">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Kode</TableHead>
+                  <TableHead>Nama Mata Pelajaran</TableHead>
+                  <TableHead>Guru Pengampu</TableHead>
+                  <TableHead className="text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mapelList?.map((mapel: any) => (
+                  <TableRow key={mapel.id}>
+                    <TableCell className="font-medium">{mapel.code}</TableCell>
+                    <TableCell>{mapel.name}</TableCell>
+                    <TableCell>{mapel.teacher?.name || '-'}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" onClick={() => { setEditingMapel(mapel); setIsFormOpen(true); }}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        if (confirm('Hapus mapel ini?')) deleteMutation.mutate(mapel.id);
+                      }}>
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
