@@ -1,0 +1,42 @@
+# Ignore everything in root
+*
+
+# Allow necessary files
+!pnpm-workspace.yaml
+!package.json
+!pnpm-lock.yaml
+!turbo.json
+
+# Allow apps directory
+!apps/
+apps/*
+!apps/backend/
+apps/backend/*
+!apps/backend/package.json
+!apps/backend/nest-cli.json
+!apps/backend/tsconfig.json
+!apps/backend/tsconfig.build.json
+!apps/backend/src/
+!apps/backend/Dockerfile
+
+# Allow packages directory
+!packages/
+packages/*
+!packages/prisma/
+packages/prisma/*
+!packages/prisma/package.json
+!packages/prisma/tsconfig.json
+!packages/prisma/schema.prisma
+!packages/prisma/migrations/
+!packages/prisma/seed.ts
+!packages/prisma/index.ts
+
+!packages/typescript-config/
+!packages/eslint-config/
+
+# Node modules and build artifacts
+node_modules/
+dist/
+.next/
+.turbo/
+*.log

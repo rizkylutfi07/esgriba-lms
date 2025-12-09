@@ -1,0 +1,38 @@
+# Ignore everything in root
+*
+
+# Allow necessary files
+!pnpm-workspace.yaml
+!package.json
+!pnpm-lock.yaml
+!turbo.json
+
+# Allow apps directory
+!apps/
+apps/*
+!apps/frontend/
+apps/frontend/*
+!apps/frontend/package.json
+!apps/frontend/next.config.ts
+!apps/frontend/tsconfig.json
+!apps/frontend/postcss.config.mjs
+!apps/frontend/tailwind.config.ts
+!apps/frontend/app/
+!apps/frontend/components/
+!apps/frontend/lib/
+!apps/frontend/public/
+!apps/frontend/Dockerfile
+
+# Allow packages directory
+!packages/
+packages/*
+!packages/typescript-config/
+!packages/eslint-config/
+!packages/ui/
+
+# Node modules and build artifacts
+node_modules/
+dist/
+.next/
+.turbo/
+*.log

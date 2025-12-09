@@ -1,0 +1,303 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  GURU
+  SISWA
+}
+
+enum Level {
+  X
+  XI
+  XII
+}
+
+enum Semester {
+  GANJIL
+  GENAP
+}
+
+enum DayOfWeek {
+  SENIN
+  SELASA
+  RABU
+  KAMIS
+  JUMAT
+  SABTU
+}
+
+enum Gender {
+  LAKI_LAKI
+  PEREMPUAN
+}
+
+enum TugasStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum PengumpulanStatus {
+  SUBMITTED
+  LATE
+  GRADED
+}
+
+enum AbsensiStatus {
+  HADIR
+  IZIN
+  SAKIT
+  ALPHA
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  guru         Guru?
+  siswa        Siswa?
+
+  @@map("users")
+}
+
+model Siswa {
+  id        String    @id @default(cuid())
+  nis       String    @unique
+  nisn      String    @unique
+  name      String
+  gender    Gender
+  birthDate DateTime
+  address   String?
+  classId   String?
+  userId    String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  class     Kelas?    @relation(fields: [classId], references: [id], onDelete: SetNull)
+  pengumpulanTugas PengumpulanTugas[]
+  absensi   Absensi[]
+  nilai     Nilai[]
+
+  @@map("siswa")
+}
+
+model Guru {
+  id        String   @id @default(cuid())
+  nip       String   @unique
+  name      String
+  email     String   @unique
+  phone     String?
+  userId    String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  homeroomClasses Kelas[]   @relation("HomeroomTeacher")
+  subjects        Mapel[]
+  schedules       Jadwal[]
+  materi          Materi[]
+  tugas           Tugas[]
+  absensi         Absensi[]
+
+  @@map("guru")
+}
+
+model Jurusan {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  classes   Kelas[]
+
+  @@map("jurusan")
+}
+
+model Kelas {
+  id                  String   @id @default(cuid())
+  name                String
+  level               Level
+  majorId             String?
+  homeroomTeacherId   String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  major               Jurusan? @relation(fields: [majorId], references: [id], onDelete: SetNull)
+  homeroomTeacher     Guru?    @relation("HomeroomTeacher", fields: [homeroomTeacherId], references: [id], onDelete: SetNull)
+  students            Siswa[]
+  schedules           Jadwal[]
+  materi              Materi[]
+  tugas               Tugas[]
+  absensi             Absensi[]
+
+  @@map("kelas")
+}
+
+model Mapel {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  teacherId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher   Guru?    @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  schedules Jadwal[]
+  materi    Materi[]
+  tugas     Tugas[]
+  nilai     Nilai[]
+
+  @@map("mapel")
+}
+
+model TahunAjaran {
+  id        String   @id @default(cuid())
+  yearStart Int
+  yearEnd   Int
+  semester  Semester
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([yearStart, yearEnd, semester])
+  @@map("tahun_ajaran")
+}
+
+model Jadwal {
+  id        String    @id @default(cuid())
+  classId   String
+  subjectId String
+  teacherId String
+  dayOfWeek DayOfWeek
+  startTime String
+  endTime   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  class     Kelas     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject   Mapel     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher   Guru      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  absensi   Absensi[]
+
+  @@map("jadwal")
+}
+
+// ==================== LMS MODELS ====================
+
+model Materi {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  content     String   @db.Text
+  fileUrl     String?
+  classId     String
+  subjectId   String
+  teacherId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  class       Kelas    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject     Mapel    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher     Guru     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@map("materi")
+}
+
+model Tugas {
+  id          String        @id @default(cuid())
+  title       String
+  description String?       @db.Text
+  dueDate     DateTime
+  maxScore    Int           @default(100)
+  status      TugasStatus   @default(DRAFT)
+  classId     String
+  subjectId   String
+  teacherId   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  class       Kelas         @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject     Mapel         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher     Guru          @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  pengumpulan PengumpulanTugas[]
+
+  @@map("tugas")
+}
+
+model PengumpulanTugas {
+  id          String              @id @default(cuid())
+  tugasId     String
+  siswaId     String
+  fileUrl     String?
+  content     String?             @db.Text
+  score       Int?
+  feedback    String?             @db.Text
+  status      PengumpulanStatus   @default(SUBMITTED)
+  submittedAt DateTime            @default(now())
+  gradedAt    DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  tugas       Tugas               @relation(fields: [tugasId], references: [id], onDelete: Cascade)
+  siswa       Siswa               @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+
+  @@unique([tugasId, siswaId])
+  @@map("pengumpulan_tugas")
+}
+
+model Absensi {
+  id          String          @id @default(cuid())
+  jadwalId    String
+  siswaId     String
+  classId     String
+  teacherId   String
+  date        DateTime
+  status      AbsensiStatus
+  note        String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  jadwal      Jadwal          @relation(fields: [jadwalId], references: [id], onDelete: Cascade)
+  siswa       Siswa           @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  class       Kelas           @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher     Guru            @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([jadwalId, siswaId, date])
+  @@map("absensi")
+}
+
+model Nilai {
+  id          String   @id @default(cuid())
+  siswaId     String
+  subjectId   String
+  semester    Semester
+  tahunAjaran String
+  nilaiTugas  Float?
+  nilaiUTS    Float?
+  nilaiUAS    Float?
+  nilaiAkhir  Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  siswa       Siswa    @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  subject     Mapel    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([siswaId, subjectId, semester, tahunAjaran])
+  @@map("nilai")
+}
