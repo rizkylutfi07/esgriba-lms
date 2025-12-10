@@ -301,7 +301,7 @@ export default function KelasPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {kelasList?.map((kelas: any) => (
+                  {Array.isArray(kelasList) && kelasList.map((kelas: any) => (
                     <TableRow key={kelas.id}>
                       <TableCell className="font-medium">{kelas.name}</TableCell>
                       <TableCell>{kelas.level}</TableCell>

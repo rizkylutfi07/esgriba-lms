@@ -68,30 +68,34 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  guru         Guru?
-  siswa        Siswa?
+  guru  Guru?
+  siswa Siswa?
 
   @@map("users")
 }
 
 model Siswa {
-  id        String    @id @default(cuid())
-  nis       String    @unique
-  nisn      String    @unique
+  id        String   @id @default(cuid())
+  nis       String   @unique
+  nisn      String   @unique
   name      String
   gender    Gender
   birthDate DateTime
   address   String?
   classId   String?
-  userId    String?   @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  userId    String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
-  class     Kelas?    @relation(fields: [classId], references: [id], onDelete: SetNull)
+  user             User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  class            Kelas?             @relation(fields: [classId], references: [id], onDelete: SetNull)
   pengumpulanTugas PengumpulanTugas[]
-  absensi   Absensi[]
-  nilai     Nilai[]
+  absensi          Absensi[]
+  nilai            Nilai[]
+
+  // CBT Relations
+  testAttempts TestAttempt[]
+  allowedTests Test[]        @relation("TestAllowedStudents")
 
   @@map("siswa")
 }
@@ -106,13 +110,18 @@ model Guru {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
-  homeroomClasses Kelas[]   @relation("HomeroomTeacher")
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  homeroomClasses Kelas[]  @relation("HomeroomTeacher")
   subjects        Mapel[]
   schedules       Jadwal[]
   materi          Materi[]
-  tugas           Tugas[]
-  absensi         Absensi[]
+
+  // CBT Relations
+  createdQuestionBanks    QuestionBank[]    @relation("QuestionBankCreator")
+  createdQuestionPackages QuestionPackage[] @relation("QuestionPackageCreator")
+  createdTests            Test[]            @relation("TestCreator")
+  tugas                   Tugas[]
+  absensi                 Absensi[]
 
   @@map("guru")
 }
@@ -124,27 +133,30 @@ model Jurusan {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  classes   Kelas[]
+  classes Kelas[]
 
   @@map("jurusan")
 }
 
 model Kelas {
-  id                  String   @id @default(cuid())
-  name                String
-  level               Level
-  majorId             String?
-  homeroomTeacherId   String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                String   @id @default(cuid())
+  name              String
+  level             Level
+  majorId           String?
+  homeroomTeacherId String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  major               Jurusan? @relation(fields: [majorId], references: [id], onDelete: SetNull)
-  homeroomTeacher     Guru?    @relation("HomeroomTeacher", fields: [homeroomTeacherId], references: [id], onDelete: SetNull)
-  students            Siswa[]
-  schedules           Jadwal[]
-  materi              Materi[]
-  tugas               Tugas[]
-  absensi             Absensi[]
+  major           Jurusan? @relation(fields: [majorId], references: [id], onDelete: SetNull)
+  homeroomTeacher Guru?    @relation("HomeroomTeacher", fields: [homeroomTeacherId], references: [id], onDelete: SetNull)
+  students        Siswa[]
+  schedules       Jadwal[]
+  materi          Materi[]
+
+  // CBT Relations
+  tests   Test[]
+  tugas   Tugas[]
+  absensi Absensi[]
 
   @@map("kelas")
 }
@@ -162,6 +174,11 @@ model Mapel {
   materi    Materi[]
   tugas     Tugas[]
   nilai     Nilai[]
+
+  // CBT Relations
+  questionBanks    QuestionBank[]
+  questionPackages QuestionPackage[]
+  tests            Test[]
 
   @@map("mapel")
 }
@@ -190,10 +207,10 @@ model Jadwal {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  class     Kelas     @relation(fields: [classId], references: [id], onDelete: Cascade)
-  subject   Mapel     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  teacher   Guru      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  absensi   Absensi[]
+  class   Kelas     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject Mapel     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher Guru      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  absensi Absensi[]
 
   @@map("jadwal")
 }
@@ -212,71 +229,71 @@ model Materi {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  class       Kelas    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  subject     Mapel    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  teacher     Guru     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  class   Kelas @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject Mapel @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher Guru  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   @@map("materi")
 }
 
 model Tugas {
-  id          String        @id @default(cuid())
+  id          String      @id @default(cuid())
   title       String
-  description String?       @db.Text
+  description String?     @db.Text
   dueDate     DateTime
-  maxScore    Int           @default(100)
-  status      TugasStatus   @default(DRAFT)
+  maxScore    Int         @default(100)
+  status      TugasStatus @default(DRAFT)
   classId     String
   subjectId   String
   teacherId   String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  class       Kelas         @relation(fields: [classId], references: [id], onDelete: Cascade)
-  subject     Mapel         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  teacher     Guru          @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  class       Kelas              @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject     Mapel              @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher     Guru               @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   pengumpulan PengumpulanTugas[]
 
   @@map("tugas")
 }
 
 model PengumpulanTugas {
-  id          String              @id @default(cuid())
+  id          String            @id @default(cuid())
   tugasId     String
   siswaId     String
   fileUrl     String?
-  content     String?             @db.Text
+  content     String?           @db.Text
   score       Int?
-  feedback    String?             @db.Text
-  status      PengumpulanStatus   @default(SUBMITTED)
-  submittedAt DateTime            @default(now())
+  feedback    String?           @db.Text
+  status      PengumpulanStatus @default(SUBMITTED)
+  submittedAt DateTime          @default(now())
   gradedAt    DateTime?
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 
-  tugas       Tugas               @relation(fields: [tugasId], references: [id], onDelete: Cascade)
-  siswa       Siswa               @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  tugas Tugas @relation(fields: [tugasId], references: [id], onDelete: Cascade)
+  siswa Siswa @relation(fields: [siswaId], references: [id], onDelete: Cascade)
 
   @@unique([tugasId, siswaId])
   @@map("pengumpulan_tugas")
 }
 
 model Absensi {
-  id          String          @id @default(cuid())
-  jadwalId    String
-  siswaId     String
-  classId     String
-  teacherId   String
-  date        DateTime
-  status      AbsensiStatus
-  note        String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id        String        @id @default(cuid())
+  jadwalId  String
+  siswaId   String
+  classId   String
+  teacherId String
+  date      DateTime
+  status    AbsensiStatus
+  note      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
-  jadwal      Jadwal          @relation(fields: [jadwalId], references: [id], onDelete: Cascade)
-  siswa       Siswa           @relation(fields: [siswaId], references: [id], onDelete: Cascade)
-  class       Kelas           @relation(fields: [classId], references: [id], onDelete: Cascade)
-  teacher     Guru            @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  jadwal  Jadwal @relation(fields: [jadwalId], references: [id], onDelete: Cascade)
+  siswa   Siswa  @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  class   Kelas  @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher Guru   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   @@unique([jadwalId, siswaId, date])
   @@map("absensi")
@@ -295,9 +312,211 @@ model Nilai {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  siswa       Siswa    @relation(fields: [siswaId], references: [id], onDelete: Cascade)
-  subject     Mapel    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  siswa   Siswa @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  subject Mapel @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   @@unique([siswaId, subjectId, semester, tahunAjaran])
   @@map("nilai")
+}
+
+// ============================================
+// CBT (Computer-Based Test) System Models
+// ============================================
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  ESSAY
+  TRUE_FALSE
+}
+
+enum DifficultyLevel {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+  BLOCKED
+}
+
+model QuestionBank {
+  id              String       @id @default(cuid())
+  createdBy       String
+  subjectId       String?
+  category        String? // e.g., "Trigonometri", "Aljabar"
+  questionText    String       @db.Text
+  questionType    QuestionType @default(MULTIPLE_CHOICE)
+  expectedAnswer  String?      @db.Text // For essay questions
+  difficultyLevel Int          @default(1) // 1=Easy, 2=Medium, 3=Hard
+  points          Int          @default(1)
+  explanation     String?      @db.Text
+  options         Json? // Array of options for multiple choice
+  correctAnswer   Json? // Correct answer(s)
+  usageCount      Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime? // Soft delete
+
+  // Relations
+  creator  Guru              @relation("QuestionBankCreator", fields: [createdBy], references: [id])
+  subject  Mapel?            @relation(fields: [subjectId], references: [id])
+  packages QuestionPackage[] @relation("PackageQuestions")
+
+  @@index([createdBy, subjectId])
+  @@index([category])
+  @@map("question_banks")
+}
+
+model QuestionPackage {
+  id              String          @id @default(cuid())
+  name            String
+  description     String?         @db.Text
+  subjectId       String
+  createdBy       String
+  difficultyLevel DifficultyLevel @default(MEDIUM)
+  totalQuestions  Int             @default(0)
+  totalPoints     Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  subject   Mapel          @relation(fields: [subjectId], references: [id])
+  creator   Guru           @relation("QuestionPackageCreator", fields: [createdBy], references: [id])
+  questions QuestionBank[] @relation("PackageQuestions")
+
+  @@map("question_packages")
+}
+
+model Test {
+  id                    String    @id @default(cuid())
+  title                 String
+  description           String?   @db.Text
+  duration              Int // Duration in minutes
+  totalQuestions        Int       @default(0)
+  passingScore          Int       @default(70)
+  isActive              Boolean   @default(false)
+  cheatDetectionEnabled Boolean   @default(true)
+  startTime             DateTime?
+  endTime               DateTime?
+  createdBy             String
+  subjectId             String?
+  classId               String?
+  session               Int? // Optional session number
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  deletedAt             DateTime? // Soft delete
+
+  // Relations
+  creator         Guru          @relation("TestCreator", fields: [createdBy], references: [id])
+  subject         Mapel?        @relation(fields: [subjectId], references: [id])
+  class           Kelas?        @relation(fields: [classId], references: [id])
+  questions       Question[]
+  attempts        TestAttempt[]
+  allowedStudents Siswa[]       @relation("TestAllowedStudents")
+
+  @@map("tests")
+}
+
+model Question {
+  id             String       @id @default(cuid())
+  testId         String
+  questionText   String       @db.Text
+  questionType   QuestionType @default(MULTIPLE_CHOICE)
+  expectedAnswer String?      @db.Text
+  points         Int          @default(1)
+  order          Int          @default(0)
+  imageUrl       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Relations
+  test        Test             @relation(fields: [testId], references: [id], onDelete: Cascade)
+  options     QuestionOption[]
+  userAnswers UserAnswer[]
+
+  @@index([testId])
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String   @id @default(cuid())
+  questionId String
+  optionText String   @db.Text
+  isCorrect  Boolean  @default(false)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("question_options")
+}
+
+model TestAttempt {
+  id             String        @id @default(cuid())
+  testId         String
+  siswaId        String
+  startedAt      DateTime      @default(now())
+  finishedAt     DateTime?
+  score          Float?
+  isPassed       Boolean?
+  status         AttemptStatus @default(IN_PROGRESS)
+  isBlocked      Boolean       @default(false)
+  blockedAt      DateTime?
+  blockedReason  String?
+  cheatCount     Int           @default(0)
+  lastActivityAt DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Relations
+  test    Test               @relation(fields: [testId], references: [id], onDelete: Cascade)
+  siswa   Siswa              @relation(fields: [siswaId], references: [id])
+  answers UserAnswer[]
+  events  TestAttemptEvent[]
+
+  @@index([testId])
+  @@index([siswaId])
+  @@map("test_attempts")
+}
+
+model UserAnswer {
+  id           String   @id @default(cuid())
+  attemptId    String
+  questionId   String
+  answerText   String?  @db.Text
+  isCorrect    Boolean  @default(false)
+  pointsEarned Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  attempt  TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id])
+
+  @@index([attemptId])
+  @@index([questionId])
+  @@map("user_answers")
+}
+
+model TestAttemptEvent {
+  id          String   @id @default(cuid())
+  attemptId   String
+  eventType   String // e.g., "tab_hidden", "window_blur", "blocked"
+  triggeredBy String   @default("student") // "student" or "system"
+  description String?  @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  attempt TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId])
+  @@map("test_attempt_events")
 }

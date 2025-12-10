@@ -142,7 +142,7 @@ export default function MapelPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mapelList?.map((mapel: any) => (
+                {Array.isArray(mapelList) && mapelList.map((mapel: any) => (
                   <TableRow key={mapel.id}>
                     <TableCell className="font-medium">{mapel.code}</TableCell>
                     <TableCell>{mapel.name}</TableCell>

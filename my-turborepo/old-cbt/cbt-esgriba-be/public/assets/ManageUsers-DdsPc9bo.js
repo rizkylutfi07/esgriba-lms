@@ -1,0 +1,1 @@
+import{j as e}from"./vendor-ui-XVksrZ5j.js";import"./vendor-react-DruPVAFJ.js";function n(){return e.jsxs("div",{children:[e.jsx("h1",{className:"text-3xl font-bold mb-6",children:"Kelola Pengguna"}),e.jsx("p",{children:"User management interface will appear here"})]})}export{n as default};

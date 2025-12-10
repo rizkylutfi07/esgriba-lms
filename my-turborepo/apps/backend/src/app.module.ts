@@ -15,6 +15,7 @@ import { TugasModule } from './tugas/tugas.module';
 import { PengumpulanTugasModule } from './pengumpulan-tugas/pengumpulan-tugas.module';
 import { AbsensiModule } from './absensi/absensi.module';
 import { NilaiModule } from './nilai/nilai.module';
+import { CbtModule } from './modules/cbt/cbt.module';
 
 @Module({
   imports: [
@@ -32,8 +33,9 @@ import { NilaiModule } from './nilai/nilai.module';
     PengumpulanTugasModule,
     AbsensiModule,
     NilaiModule,
+    CbtModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

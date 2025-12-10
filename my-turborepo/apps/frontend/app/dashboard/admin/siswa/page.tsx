@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,12 +10,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useToast } from '@/components/ui/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Plus, Pencil, Trash2, Download, Upload, FileDown } from 'lucide-react';
+import { Plus, Pencil, Trash2, Download, Upload, FileDown, Search, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 
 export default function SiswaPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingSiswa, setEditingSiswa] = useState<any>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState<'name' | 'nis' | 'nisn' | 'class'>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -83,6 +88,71 @@ export default function SiswaPage() {
     } else {
       createMutation.mutate(data);
     }
+  };
+
+  // Filter, sort, and paginate data
+  const filteredAndSortedData = useMemo(() => {
+    if (!Array.isArray(siswaList)) return [];
+
+    // Filter
+    let filtered = siswaList.filter((siswa: any) => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        siswa.name?.toLowerCase().includes(searchLower) ||
+        siswa.nis?.toLowerCase().includes(searchLower) ||
+        siswa.nisn?.toLowerCase().includes(searchLower) ||
+        siswa.class?.name?.toLowerCase().includes(searchLower)
+      );
+    });
+
+    // Sort
+    filtered.sort((a: any, b: any) => {
+      let aVal = '';
+      let bVal = '';
+
+      if (sortField === 'name') {
+        aVal = a.name || '';
+        bVal = b.name || '';
+      } else if (sortField === 'nis') {
+        aVal = a.nis || '';
+        bVal = b.nis || '';
+      } else if (sortField === 'nisn') {
+        aVal = a.nisn || '';
+        bVal = b.nisn || '';
+      } else if (sortField === 'class') {
+        aVal = a.class?.name || '';
+        bVal = b.class?.name || '';
+      }
+
+      if (sortDirection === 'asc') {
+        return aVal.localeCompare(bVal);
+      } else {
+        return bVal.localeCompare(aVal);
+      }
+    });
+
+    return filtered;
+  }, [siswaList, searchQuery, sortField, sortDirection]);
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredAndSortedData.slice(startIndex, endIndex);
+  }, [filteredAndSortedData, currentPage]);
+
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+
+  const handleSort = (field: 'name' | 'nis' | 'nisn' | 'class') => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleExportExcel = async () => {
@@ -290,44 +360,151 @@ export default function SiswaPage() {
 
       <Card>
         <CardContent className="pt-6">
+          {/* Search Bar */}
+          <div className="mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Cari nama, NIS, NISN, atau kelas..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="pl-10"
+              />
+            </div>
+          </div>
+
           {isLoading ? (
             <p>Loading...</p>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>NIS</TableHead>
-                    <TableHead>NISN</TableHead>
-                    <TableHead>Nama</TableHead>
-                    <TableHead>Jenis Kelamin</TableHead>
-                    <TableHead>Kelas</TableHead>
-                    <TableHead className="text-right">Aksi</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {siswaList?.map((siswa: any) => (
-                    <TableRow key={siswa.id}>
-                      <TableCell className="font-medium">{siswa.nis}</TableCell>
-                      <TableCell>{siswa.nisn}</TableCell>
-                      <TableCell>{siswa.name}</TableCell>
-                      <TableCell>{siswa.gender === 'LAKI_LAKI' ? 'L' : 'P'}</TableCell>
-                      <TableCell>{siswa.class?.name || '-'}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={() => { setEditingSiswa(siswa); setIsFormOpen(true); }}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => {
-                          if (confirm('Hapus siswa ini?')) deleteMutation.mutate(siswa.id);
-                        }}>
-                          <Trash2 className="w-4 h-4 text-red-600" />
-                        </Button>
-                      </TableCell>
+            <>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort('nis')}
+                      >
+                        <div className="flex items-center gap-1">
+                          NIS
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort('nisn')}
+                      >
+                        <div className="flex items-center gap-1">
+                          NISN
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </TableHead>
+                      <TableHead
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort('name')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Nama
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </TableHead>
+                      <TableHead>Jenis Kelamin</TableHead>
+                      <TableHead
+                        className="cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort('class')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Kelas
+                          <ArrowUpDown className="w-3 h-3" />
+                        </div>
+                      </TableHead>
+                      <TableHead className="text-right">Aksi</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedData.length > 0 ? (
+                      paginatedData.map((siswa: any) => (
+                        <TableRow key={siswa.id}>
+                          <TableCell className="font-medium">{siswa.nis}</TableCell>
+                          <TableCell>{siswa.nisn}</TableCell>
+                          <TableCell>{siswa.name}</TableCell>
+                          <TableCell>{siswa.gender === 'LAKI_LAKI' ? 'L' : 'P'}</TableCell>
+                          <TableCell>{siswa.class?.name || '-'}</TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm" onClick={() => { setEditingSiswa(siswa); setIsFormOpen(true); }}>
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => {
+                              if (confirm('Hapus siswa ini?')) deleteMutation.mutate(siswa.id);
+                            }}>
+                              <Trash2 className="w-4 h-4 text-red-600" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center text-muted-foreground">
+                          Tidak ada data siswa
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Pagination */}
+              {filteredAndSortedData.length > 0 && (
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-4">
+                  <div className="text-sm text-muted-foreground">
+                    Menampilkan {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredAndSortedData.length)} dari {filteredAndSortedData.length} data
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </Button>
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handlePageChange(pageNum)}
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>

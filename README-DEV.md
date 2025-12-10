@@ -1,11 +1,11 @@
-docker compose up postgress -d
+docker compose up postgres -d
 
 cd my-turborepo && pnpm install
 
-cd my-turborepo/packages/prisma && npx prisma migrate deploy
+cd packages/prisma && npx prisma migrate deploy
 
-cd my-turborepo/packages/prisma && pnpm db:generate
+cd packages/prisma && pnpm db:generate
 
-cd my-turborepo/packages/prisma && pnpm db seed
+cd packages/prisma && pnpm prisma db seed
 
-cd my-turborepo/packages/prisma && npx prisma studio
+cd packages/prisma && npx prisma studio

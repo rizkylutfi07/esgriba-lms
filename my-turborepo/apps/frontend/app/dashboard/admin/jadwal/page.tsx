@@ -47,6 +47,9 @@ export default function JadwalPage() {
       setIsFormOpen(false);
       toast({ title: 'Jadwal berhasil dibuat' });
     },
+    onError: (error: any) => {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
+    },
   });
 
   const updateMutation = useMutation({
@@ -57,6 +60,9 @@ export default function JadwalPage() {
       setEditingJadwal(null);
       toast({ title: 'Jadwal berhasil diupdate' });
     },
+    onError: (error: any) => {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
+    },
   });
 
   const deleteMutation = useMutation({
@@ -64,6 +70,9 @@ export default function JadwalPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jadwal'] });
       toast({ title: 'Jadwal berhasil dihapus' });
+    },
+    onError: (error: any) => {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
     },
   });
 
@@ -216,25 +225,33 @@ export default function JadwalPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {jadwalList?.map((jadwal: any) => (
-                  <TableRow key={jadwal.id}>
-                    <TableCell className="font-medium">{jadwal.dayOfWeek}</TableCell>
-                    <TableCell>{jadwal.startTime} - {jadwal.endTime}</TableCell>
-                    <TableCell>{jadwal.class?.name}</TableCell>
-                    <TableCell>{jadwal.subject?.name}</TableCell>
-                    <TableCell>{jadwal.teacher?.name}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => { setEditingJadwal(jadwal); setIsFormOpen(true); }}>
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => {
-                        if (confirm('Hapus jadwal ini?')) deleteMutation.mutate(jadwal.id);
-                      }}>
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </Button>
+                {Array.isArray(jadwalList) && jadwalList.length > 0 ? (
+                  jadwalList.map((jadwal: any) => (
+                    <TableRow key={jadwal.id}>
+                      <TableCell className="font-medium">{jadwal.dayOfWeek}</TableCell>
+                      <TableCell>{jadwal.startTime} - {jadwal.endTime}</TableCell>
+                      <TableCell>{jadwal.class?.name}</TableCell>
+                      <TableCell>{jadwal.subject?.name}</TableCell>
+                      <TableCell>{jadwal.teacher?.name}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" onClick={() => { setEditingJadwal(jadwal); setIsFormOpen(true); }}>
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => {
+                          if (confirm('Hapus jadwal ini?')) deleteMutation.mutate(jadwal.id);
+                        }}>
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      Tidak ada jadwal
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           )}

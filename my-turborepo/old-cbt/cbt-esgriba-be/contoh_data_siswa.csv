@@ -1,0 +1,11 @@
+nama,email,nisn,nis,jenis_kelamin,password,kelas,jurusan,status
+Ahmad Rizki,ahmad.rizki@example.com,0012024001,0012024001,L,password123,X TEKNIK KOMPUTER JARINGAN,Teknik Komputer Jaringan,aktif
+Siti Nurhaliza,siti.nur@example.com,0012024002,0012024002,P,password123,X TEKNIK KENDARAAN RINGAN,Teknik Kendaraan Ringan,aktif
+Budi Santoso,budi.santoso@example.com,0012024003,0012024003,L,password123,X AKUNTANSI,Akuntansi,aktif
+Citra Dewi,citra.dewi@example.com,0012024004,0012024004,P,password123,XI TEKNIK KOMPUTER JARINGAN,Teknik Komputer Jaringan,aktif
+Dedi Kurniawan,dedi.kurniawan@example.com,0012024005,0012024005,L,password123,XI TEKNIK KENDARAAN RINGAN,Teknik Kendaraan Ringan,aktif
+Eka Putri,eka.putri@example.com,0012024006,0012024006,P,password123,XI AKUNTANSI,Akuntansi,aktif
+Faisal Rahman,faisal.rahman@example.com,0012024007,0012024007,L,password123,XII TEKNIK KOMPUTER JARINGAN,Teknik Komputer Jaringan,aktif
+Gina Lestari,gina.lestari@example.com,0012024008,0012024008,P,password123,XII TEKNIK KENDARAAN RINGAN,Teknik Kendaraan Ringan,aktif
+Hadi Wijaya,hadi.wijaya@example.com,0012024009,0012024009,L,password123,XII AKUNTANSI,Akuntansi,aktif
+Intan Permata,intan.permata@example.com,0012024010,0012024010,P,password123,X TEKNIK KOMPUTER JARINGAN,Teknik Komputer Jaringan,aktif

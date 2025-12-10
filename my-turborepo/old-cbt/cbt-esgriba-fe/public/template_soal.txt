@@ -1,0 +1,53 @@
+=PANDUAN=
+• [NOMOR ] harus ada untuk menandakan awal mulai satu soal
+• JENIS SOAL hanya boleh PG, ESSAY
+• NILAI hanya boleh berisi angka
+• Untuk jawaban jenis soal PG menggunakan numbering (A, B, C, D, E, F)
+• JAWABAN maksimal 6 butir
+• Untuk soal ESSAY, tidak perlu section JAWABAN
+=PANDUAN=
+
+[NOMOR 1]
+JENIS SOAL: PG
+NILAI: 10
+
+SOAL:
+Tulis pertanyaan soal di sini...
+
+JAWABAN:
+A. Pilihan jawaban pertama
+B. Pilihan jawaban kedua
+C. Pilihan jawaban ketiga
+D. Pilihan jawaban keempat
+E. Pilihan jawaban kelima
+
+KUNCI JAWABAN:
+A
+
+
+[NOMOR 2]
+JENIS SOAL: ESSAY
+NILAI: 20
+
+SOAL:
+Tulis pertanyaan essay di sini...
+
+KUNCI JAWABAN:
+Tulis jawaban yang diharapkan di sini...
+
+
+[NOMOR 3]
+JENIS SOAL: PG
+NILAI: 10
+
+SOAL:
+Contoh soal pilihan ganda kedua...
+
+JAWABAN:
+A. Opsi A
+B. Opsi B
+C. Opsi C
+D. Opsi D
+
+KUNCI JAWABAN:
+C

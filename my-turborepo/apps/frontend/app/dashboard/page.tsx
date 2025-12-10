@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { StatsCard } from "@/components/dashboard/stats-card";
@@ -9,9 +12,32 @@ import { Button } from "@/components/ui/button";
 
 
 export default function DashboardPage() {
+    const router = useRouter();
+    const { data: user, isLoading: isUserLoading } = useQuery({
+        queryKey: ['me'],
+        queryFn: () => api.getCurrentUser(),
+    });
+
+    // Commented out the redirect logic to allow users to navigate freely
+    // useEffect(() => {
+    //     if (!isUserLoading && user) {
+    //         if (user.role === 'GURU') {
+    //             router.push('/dashboard/guru');
+    //         } else if (user.role === 'SISWA') {
+    //             router.push('/dashboard/siswa');
+    //         }
+    //     }
+    // }, [user, isUserLoading, router]);
+
     const { data: mapelList } = useQuery({ queryKey: ['mapel'], queryFn: () => api.getMapel() });
     const { data: tugasList } = useQuery({ queryKey: ['tugas'], queryFn: () => api.getTugas() });
-    const { data: guruCount } = useQuery({ queryKey: ['guru'], queryFn: () => api.getGuru().then(res => res.length) });
+    const { data: guruCount } = useQuery({
+        queryKey: ['guru'],
+        queryFn: async () => {
+            const res = await api.getGuru();
+            return Array.isArray(res) ? res.length : 0;
+        }
+    });
 
     const stats = [
         { label: "Mata Pelajaran Aktif", value: mapelList?.length?.toString() || "0", icon: BookOpen, color: "blue" as const },
