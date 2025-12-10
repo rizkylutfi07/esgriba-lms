@@ -1,149 +1,97 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
-    Users,
     BookOpen,
-    Calendar,
-    GraduationCap,
+    MessageSquare,
     Settings,
     LogOut,
-    Menu,
-    X,
-    School,
-    FileText
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+    User,
+    GraduationCap,
+    Clock
+} from "lucide-react";
 
-interface SidebarProps {
-    isOpen: boolean;
-    setIsOpen: (open: boolean) => void;
-}
-
-export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+export function Sidebar() {
     const pathname = usePathname();
-    const [role, setRole] = useState<string | null>(null);
 
-    useEffect(() => {
-        // Simple client-side role check from consistent localStorage use in Login
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-            const user = JSON.parse(userStr);
-            setRole(user.role?.toLowerCase());
-        }
-    }, []);
-
-    const adminLinks = [
-        { href: '/dashboard/admin', label: 'Dashboard', icon: LayoutDashboard },
-        { href: '/dashboard/admin/users', label: 'Manajemen User', icon: Users },
-        { href: '/dashboard/admin/kelas', label: 'Data Kelas', icon: School },
-        { href: '/dashboard/admin/mapel', label: 'Mata Pelajaran', icon: BookOpen },
-        { href: '/dashboard/admin/siswa', label: 'Data Siswa', icon: GraduationCap },
-        { href: '/dashboard/admin/guru', label: 'Data Guru', icon: Users },
-        { href: '/dashboard/admin/jadwal', label: 'Jadwal Pelajaran', icon: Calendar },
+    const routes = [
+        {
+            label: "Dashboard",
+            icon: LayoutDashboard,
+            href: "/dashboard",
+            color: "text-sky-500",
+        },
+        {
+            label: "Mata Pelajaran", // Classes/Subjects
+            icon: BookOpen,
+            href: "/dashboard/courses",
+            color: "text-violet-500",
+        },
+        {
+            label: "Jadwal Pelajaran", // Schedule
+            icon: Clock, // Using Clock for Schedule
+            href: "/dashboard/schedule",
+            color: "text-pink-700",
+        },
+        {
+            label: "Tugas", // Assignments
+            icon: BookOpen, // Using BookOpen as proxy or maybe FileText if available? Let's stick to existing imports or add FileText
+            href: "/dashboard/assignments",
+            color: "text-orange-700",
+        },
+        {
+            label: "Nilai", // Grades
+            icon: GraduationCap,
+            href: "/dashboard/grades",
+            color: "text-emerald-500",
+        },
+        {
+            label: "Settings",
+            icon: Settings,
+            href: "/dashboard/settings",
+        },
     ];
-
-    const guruLinks = [
-        { href: '/dashboard/guru', label: 'Dashboard', icon: LayoutDashboard },
-        { href: '/dashboard/guru/kelas', label: 'Kelas Saya', icon: Users },
-        { href: '/dashboard/guru/materi', label: 'Materi', icon: BookOpen },
-        { href: '/dashboard/guru/tugas', label: 'Tugas', icon: FileText },
-        { href: '/dashboard/guru/jadwal', label: 'Jadwal Mengajar', icon: Calendar },
-    ];
-
-    const siswaLinks = [
-        { href: '/dashboard/siswa', label: 'Dashboard', icon: LayoutDashboard },
-        { href: '/dashboard/siswa/jadwal', label: 'Jadwal Saya', icon: Calendar },
-        { href: '/dashboard/siswa/materi', label: 'Materi', icon: BookOpen },
-        { href: '/dashboard/siswa/tugas', label: 'Tugas', icon: FileText },
-        { href: '/dashboard/siswa/nilai', label: 'Nilai', icon: GraduationCap },
-    ];
-
-    let links = siswaLinks;
-    if (role === 'admin') links = adminLinks;
-    if (role === 'guru') links = guruLinks;
-
     return (
-        <>
-            {/* Mobile Overlay */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
-                    onClick={() => setIsOpen(false)}
-                />
-            )}
-
-            {/* Sidebar Container */}
-            <aside
-                className={cn(
-                    "fixed top-0 left-0 z-50 h-screen w-64 bg-card border-r transition-transform duration-300 ease-in-out md:translate-x-0",
-                    isOpen ? "translate-x-0" : "-translate-x-full"
-                )}
-            >
-                <div className="flex h-16 items-center border-b px-6">
-                    <div className="flex items-center gap-2 font-bold text-xl text-primary">
-                        <div className="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">E</div>
-                        <span>Esgriba</span>
+        <div className="space-y-4 py-4 flex flex-col h-full bg-slate-900 text-white">
+            <div className="px-3 py-2 flex-1">
+                <Link href="/dashboard" className="flex items-center pl-3 mb-14">
+                    <div className="relative w-8 h-8 mr-4">
+                        <GraduationCap className="h-8 w-8 text-primary" />
                     </div>
-                    <Button variant="ghost" size="icon" className="ml-auto md:hidden" onClick={() => setIsOpen(false)}>
-                        <X className="h-5 w-5" />
-                    </Button>
-                </div>
-
-                <div className="flex flex-col h-[calc(100vh-64px)] justify-between py-6">
-                    <nav className="space-y-1 px-3">
-                        {links.map((link) => {
-                            const Icon = link.icon;
-                            const isActive = pathname === link.href;
-                            return (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={cn(
-                                        "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
-                                        isActive
-                                            ? "bg-primary text-primary-foreground shadow-sm"
-                                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                                    )}
-                                >
-                                    <Icon className="h-4 w-4" />
-                                    {link.label}
-                                </Link>
-                            );
-                        })}
-                    </nav>
-
-                    <div className="px-3">
-                        <div className="mb-4 px-3">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                Sistem
-                            </p>
-                        </div>
+                    <h1 className="text-2xl font-bold">
+                        Esgriba LMS
+                    </h1>
+                </Link>
+                <div className="space-y-1">
+                    {routes.map((route) => (
                         <Link
-                            href="/dashboard/settings"
-                            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                            key={route.href}
+                            href={route.href}
+                            className={cn(
+                                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                                pathname === route.href ? "text-white bg-white/10" : "text-zinc-400"
+                            )}
                         >
-                            <Settings className="h-4 w-4" />
-                            Pengaturan
+                            <div className="flex items-center flex-1">
+                                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                                {route.label}
+                            </div>
                         </Link>
-                        <button
-                            onClick={() => {
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('user');
-                                window.location.href = '/login';
-                            }}
-                            className="w-full flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10"
-                        >
-                            <LogOut className="h-4 w-4" />
-                            Keluar
-                        </button>
-                    </div>
+                    ))}
                 </div>
-            </aside>
-        </>
+            </div>
+            <div className="px-3 py-2">
+                <div className="p-3 bg-white/5 rounded-lg mb-4">
+                    <h3 className="text-sm font-semibold mb-2 text-white">Upgrade Plan</h3>
+                    <p className="text-xs text-zinc-400 mb-3">Get unlimited access to all courses.</p>
+                    <button className="w-full bg-primary text-white text-xs py-2 rounded-md hover:bg-primary/90 transition">
+                        Upgrade
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 }
