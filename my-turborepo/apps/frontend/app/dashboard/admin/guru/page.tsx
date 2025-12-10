@@ -236,7 +236,7 @@ export default function GuruPage() {
                   <Input id="name" name="name" defaultValue={editingGuru?.name} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="gender">Jenip Kelamin</Label>
+                  <Label htmlFor="gender">Jenis Kelamin</Label>
                   <select
                     id="gender"
                     name="gender"
@@ -300,7 +300,7 @@ export default function GuruPage() {
                     <TableHead>NIP</TableHead>
                     <TableHead>NIPN</TableHead>
                     <TableHead>Nama</TableHead>
-                    <TableHead>Jenip Kelamin</TableHead>
+                    <TableHead>Jenis Kelamin</TableHead>
                     <TableHead>Kelas</TableHead>
                     <TableHead className="text-right">Aksi</TableHead>
                   </TableRow>

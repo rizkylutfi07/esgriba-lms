@@ -42,6 +42,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         { href: '/dashboard/admin/users', label: 'Manajemen User', icon: Users },
         { href: '/dashboard/admin/kelas', label: 'Data Kelas', icon: School },
         { href: '/dashboard/admin/mapel', label: 'Mata Pelajaran', icon: BookOpen },
+        { href: '/dashboard/admin/siswa', label: 'Data Siswa', icon: GraduationCap },
+        { href: '/dashboard/admin/guru', label: 'Data Guru', icon: Users },
         { href: '/dashboard/admin/jadwal', label: 'Jadwal Pelajaran', icon: Calendar },
     ];
 
