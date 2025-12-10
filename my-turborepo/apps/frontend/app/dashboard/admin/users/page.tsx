@@ -28,7 +28,7 @@ export default function UsersPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setIsFormOpen(false);
-      toast({ title: 'User berhasil dibuat' });
+      toast({ title: 'Pengguna berhasil dibuat' });
     },
     onError: (error: any) => {
       toast({ variant: 'destructive', title: 'Error', description: error.message });
@@ -41,7 +41,7 @@ export default function UsersPage() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setIsFormOpen(false);
       setEditingUser(null);
-      toast({ title: 'User berhasil diupdate' });
+      toast({ title: 'Pengguna berhasil diperbarui' });
     },
     onError: (error: any) => {
       toast({ variant: 'destructive', title: 'Error', description: error.message });
@@ -52,7 +52,7 @@ export default function UsersPage() {
     mutationFn: (id: string) => api.delete(`/users/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast({ title: 'User berhasil dihapus' });
+      toast({ title: 'Pengguna berhasil dihapus' });
     },
     onError: (error: any) => {
       toast({ variant: 'destructive', title: 'Error', description: error.message });
@@ -82,7 +82,7 @@ export default function UsersPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
+    if (confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) {
       deleteMutation.mutate(id);
     }
   };
@@ -92,19 +92,19 @@ export default function UsersPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Manajemen Users</h1>
-          <p className="text-gray-500 mt-1">Kelola data users sistem</p>
+          <h1 className="text-3xl font-bold">Manajemen Pengguna</h1>
+          <p className="text-gray-500 mt-1">Kelola data pengguna sistem</p>
         </div>
         <Button onClick={() => { setEditingUser(null); setIsFormOpen(!isFormOpen); }}>
           <Plus className="w-4 h-4 mr-2" />
-          Tambah User
+          Tambah Pengguna
         </Button>
       </div>
 
       {isFormOpen && (
         <Card>
           <CardHeader>
-            <CardTitle>{editingUser ? 'Edit User' : 'Tambah User Baru'}</CardTitle>
+            <CardTitle>{editingUser ? 'Edit Pengguna' : 'Tambah Pengguna Baru'}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -138,7 +138,7 @@ export default function UsersPage() {
               </div>
               <div className="flex gap-2">
                 <Button type="submit">
-                  {editingUser ? 'Update' : 'Simpan'}
+                  {editingUser ? 'Perbarui' : 'Simpan'}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => { setIsFormOpen(false); setEditingUser(null); }}>
                   Batal
@@ -152,44 +152,46 @@ export default function UsersPage() {
       <Card>
         <CardContent className="pt-6">
           {isLoading ? (
-            <p>Loading...</p>
+            <p className="text-center py-4 text-muted-foreground">Memuat...</p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nama</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Dibuat</TableHead>
-                  <TableHead className="text-right">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users?.map((user: any) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${user.role === 'ADMIN' ? 'bg-red-100 text-red-700' :
-                        user.role === 'GURU' ? 'bg-blue-100 text-blue-700' :
-                          'bg-green-100 text-green-700'
-                        }`}>
-                        {user.role}
-                      </span>
-                    </TableCell>
-                    <TableCell>{new Date(user.createdAt).toLocaleDateString('id-ID')}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => handleEdit(user)}>
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDelete(user.id)}>
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </Button>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="whitespace-nowrap">Nama</TableHead>
+                    <TableHead className="whitespace-nowrap">Email</TableHead>
+                    <TableHead className="whitespace-nowrap">Role</TableHead>
+                    <TableHead className="whitespace-nowrap">Dibuat</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">Aksi</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {users?.map((user: any) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium whitespace-nowrap">{user.name}</TableCell>
+                      <TableCell className="whitespace-nowrap">{user.email}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.role === 'ADMIN' ? 'bg-red-100 text-red-700' :
+                          user.role === 'GURU' ? 'bg-blue-100 text-blue-700' :
+                            'bg-green-100 text-green-700'
+                          }`}>
+                          {user.role}
+                        </span>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">{new Date(user.createdAt).toLocaleDateString('id-ID')}</TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
+                        <Button variant="ghost" size="sm" onClick={() => handleEdit(user)}>
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleDelete(user.id)}>
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

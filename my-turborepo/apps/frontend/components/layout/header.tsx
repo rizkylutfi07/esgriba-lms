@@ -45,7 +45,7 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="search"
-                            placeholder="Search..."
+                            placeholder="Cari..."
                             className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px] bg-muted/50 focus:bg-background transition-colors"
                         />
                     </div>
@@ -78,11 +78,11 @@ export function Header({ setSidebarOpen }: HeaderProps) {
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Profile</DropdownMenuItem>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
+                            <DropdownMenuItem>Profil</DropdownMenuItem>
+                            <DropdownMenuItem>Pengaturan</DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                                Log out
+                                Keluar
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

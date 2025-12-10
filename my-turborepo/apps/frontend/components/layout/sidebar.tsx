@@ -38,27 +38,27 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     }, []);
 
     const adminLinks = [
-        { href: '/dashboard/admin', label: 'Overview', icon: LayoutDashboard },
-        { href: '/dashboard/admin/users', label: 'Users Management', icon: Users },
-        { href: '/dashboard/admin/classes', label: 'Classes', icon: School },
-        { href: '/dashboard/admin/subjects', label: 'Subjects', icon: BookOpen },
-        { href: '/dashboard/admin/schedule', label: 'Schedule', icon: Calendar },
+        { href: '/dashboard/admin', label: 'Dashboard', icon: LayoutDashboard },
+        { href: '/dashboard/admin/users', label: 'Manajemen User', icon: Users },
+        { href: '/dashboard/admin/kelas', label: 'Data Kelas', icon: School },
+        { href: '/dashboard/admin/mapel', label: 'Mata Pelajaran', icon: BookOpen },
+        { href: '/dashboard/admin/jadwal', label: 'Jadwal Pelajaran', icon: Calendar },
     ];
 
     const guruLinks = [
-        { href: '/dashboard/guru', label: 'Overview', icon: LayoutDashboard },
-        { href: '/dashboard/guru/classes', label: 'My Classes', icon: Users },
-        { href: '/dashboard/guru/materials', label: 'Materials', icon: BookOpen },
-        { href: '/dashboard/guru/assignments', label: 'Assignments', icon: FileText },
-        { href: '/dashboard/guru/schedule', label: 'Schedule', icon: Calendar },
+        { href: '/dashboard/guru', label: 'Dashboard', icon: LayoutDashboard },
+        { href: '/dashboard/guru/kelas', label: 'Kelas Saya', icon: Users },
+        { href: '/dashboard/guru/materi', label: 'Materi', icon: BookOpen },
+        { href: '/dashboard/guru/tugas', label: 'Tugas', icon: FileText },
+        { href: '/dashboard/guru/jadwal', label: 'Jadwal Mengajar', icon: Calendar },
     ];
 
     const siswaLinks = [
-        { href: '/dashboard/siswa', label: 'Overview', icon: LayoutDashboard },
-        { href: '/dashboard/siswa/schedule', label: 'My Schedule', icon: Calendar },
-        { href: '/dashboard/siswa/materials', label: 'Materials', icon: BookOpen },
-        { href: '/dashboard/siswa/assignments', label: 'Assignments', icon: FileText },
-        { href: '/dashboard/siswa/grades', label: 'Grades', icon: GraduationCap },
+        { href: '/dashboard/siswa', label: 'Dashboard', icon: LayoutDashboard },
+        { href: '/dashboard/siswa/jadwal', label: 'Jadwal Saya', icon: Calendar },
+        { href: '/dashboard/siswa/materi', label: 'Materi', icon: BookOpen },
+        { href: '/dashboard/siswa/tugas', label: 'Tugas', icon: FileText },
+        { href: '/dashboard/siswa/nilai', label: 'Nilai', icon: GraduationCap },
     ];
 
     let links = siswaLinks;
@@ -118,7 +118,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     <div className="px-3">
                         <div className="mb-4 px-3">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                System
+                                Sistem
                             </p>
                         </div>
                         <Link
@@ -126,7 +126,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                         >
                             <Settings className="h-4 w-4" />
-                            Settings
+                            Pengaturan
                         </Link>
                         <button
                             onClick={() => {
@@ -137,7 +137,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             className="w-full flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10"
                         >
                             <LogOut className="h-4 w-4" />
-                            Logout
+                            Keluar
                         </button>
                     </div>
                 </div>
